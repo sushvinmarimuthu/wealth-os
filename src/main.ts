@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import 'dotenv/config';
 
 import { NestFactory } from '@nestjs/core';
@@ -17,23 +18,14 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('Cats example')
-    .setDescription('The cats API description')
+    .setTitle('Wealth OS')
+    .setDescription('Wealth OS API')
     .setVersion('1.0')
-    .addTag('cats')
+    .addTag('wealth-os')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
 
-  console.log('WEALTH-OS: PORT =', process.env.PORT);
-
-  try {
-    await app.listen(process.env.PORT ?? 3000);
-    console.log('WEALTH-OS: listening');
-  } catch (error) {
-    console.error('WEALTH-OS: app.listen FAILED');
-    console.error(error);
-    throw error;
-  }
+  await app.listen(process.env.PORT ?? 3000);
 }
 await bootstrap();
