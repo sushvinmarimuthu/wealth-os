@@ -18,7 +18,10 @@ export class HealthController {
   @HealthCheck()
   check() {
     return this.health.check([
-      () => this.prismaHealth.pingCheck('database', this.prisma),
+      () =>
+        this.prismaHealth.pingCheck('database', this.prisma, {
+          timeout: 5000,
+        }),
     ]);
   }
 }

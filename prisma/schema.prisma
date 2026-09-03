@@ -26,7 +26,7 @@ model User {
 model Account {
   id                    Int                    @id @default(autoincrement())
   name                  String
-  balance               Decimal                @default(0)
+  balance               Decimal                @default(0.0)
   is_active             Boolean                @default(true)
   userId                Int
   createdAt             DateTime               @default(now())
@@ -57,7 +57,7 @@ model Transaction {
 model Budget {
   id        Int          @id @default(autoincrement())
   name      String
-  amount    Decimal      @default(0)
+  amount    Decimal      @default(0.0)
   month     Int
   year      Int
   status    BudgetStatus @default(ACTIVE)
@@ -71,7 +71,7 @@ model SavingsGoal {
   id            Int               @id @default(autoincrement())
   name          String
   targetAmount  Decimal
-  currentAmount Decimal           @default(0)
+  currentAmount Decimal           @default(0.0)
   targetDate    DateTime
   status        SavingsGoalStatus @default(IN_PROGRESS)
   userId        Int
@@ -82,9 +82,8 @@ model SavingsGoal {
 
 model RecurringTransaction {
   id           Int                @id @default(autoincrement())
-  name         String
   type         TransactionType
-  amount       Decimal            @default(0)
+  amount       Decimal            @default(0.0)
   category     ExpenseCategory?
   incomeSource IncomeSource?
   description  String?
@@ -96,6 +95,7 @@ model RecurringTransaction {
   userId       Int
   createdAt    DateTime           @default(now())
   updatedAt    DateTime           @updatedAt
+  name         String
   account      Account            @relation(fields: [accountId], references: [id])
   user         User               @relation(fields: [userId], references: [id])
 }
