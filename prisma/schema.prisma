@@ -1,0 +1,166 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                    Int                    @id @default(autoincrement())
+  email                 String                 @unique
+  name                  String
+  createdAt             DateTime               @default(now())
+  password              String
+  preferred_currency    String                 @default("INR")
+  secret_key            String                 @unique
+  updatedAt             DateTime               @updatedAt
+  accounts              Account[]
+  budgets               Budget[]
+  recurringTransactions RecurringTransaction[]
+  savingsGoals          SavingsGoal[]
+  transactions          Transaction[]
+}
+
+model Account {
+  id                    Int                    @id @default(autoincrement())
+  name                  String
+  balance               Decimal                @default(0)
+  is_active             Boolean                @default(true)
+  userId                Int
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  user                  User                   @relation(fields: [userId], references: [id])
+  recurringTransactions RecurringTransaction[]
+  transactions          Transaction[]
+}
+
+model Transaction {
+  id             Int              @id @default(autoincrement())
+  name           String
+  type           TransactionType
+  amount         Decimal
+  category       ExpenseCategory?
+  incomeSource   IncomeSource?
+  description    String?
+  payment_method PaymentMethod
+  date           DateTime
+  accountId      Int
+  userId         Int
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  account        Account          @relation(fields: [accountId], references: [id])
+  user           User             @relation(fields: [userId], references: [id])
+}
+
+model Budget {
+  id        Int          @id @default(autoincrement())
+  name      String
+  amount    Decimal      @default(0)
+  month     Int
+  year      Int
+  status    BudgetStatus @default(ACTIVE)
+  userId    Int
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  user      User         @relation(fields: [userId], references: [id])
+}
+
+model SavingsGoal {
+  id            Int               @id @default(autoincrement())
+  name          String
+  targetAmount  Decimal
+  currentAmount Decimal           @default(0)
+  targetDate    DateTime
+  status        SavingsGoalStatus @default(IN_PROGRESS)
+  userId        Int
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  user          User              @relation(fields: [userId], references: [id])
+}
+
+model RecurringTransaction {
+  id           Int                @id @default(autoincrement())
+  name         String
+  type         TransactionType
+  amount       Decimal            @default(0)
+  category     ExpenseCategory?
+  incomeSource IncomeSource?
+  description  String?
+  frequency    RecurringFrequency
+  start_date   DateTime
+  end_date     DateTime?
+  is_active    Boolean            @default(true)
+  accountId    Int
+  userId       Int
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  account      Account            @relation(fields: [accountId], references: [id])
+  user         User               @relation(fields: [userId], references: [id])
+}
+
+enum ExpenseCategory {
+  FOOD_AND_DINING
+  GROCERIES
+  TRANSPORT
+  RENT
+  MOBILE_AND_INTERNET
+  EDUCATION
+  ENTERTAINMENT
+  SHOPPING
+  HEALTHCARE
+  TRAVEL
+  UTILITIES
+  PERSONAL_CARE
+  GIFTS
+  MISCELLANEOUS
+}
+
+enum IncomeSource {
+  SALARY
+  STIPEND
+  FREELANCE
+  FAMILY_SUPPORT_DAD
+  FAMILY_SUPPORT_MOM
+  FRIENDS
+  GIFT
+  INTEREST
+  OTHER
+}
+
+enum PaymentMethod {
+  CASH
+  UPI
+  DEBIT_CARD
+  CREDIT_CARD
+  NET_BANKING
+  WALLET
+  OTHER
+}
+
+enum BudgetStatus {
+  ACTIVE
+  EXCEEDED
+  COMPLETED
+}
+
+enum SavingsGoalStatus {
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum RecurringFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  YEARLY
+}
+
+enum TransactionType {
+  EXPENSE
+  INCOME
+  TRANSFER
+}
