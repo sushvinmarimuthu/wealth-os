@@ -7,6 +7,7 @@ import { TransactionsModule } from './transactions/transactions.module.js';
 import { BudgetsModule } from './budgets/budgets.module.js';
 import { SavingsGoalsModule } from './savings-goals/savings-goals.module.js';
 import { RecurringTransactionsModule } from './recurring-transactions/recurring-transactions.module.js';
+import { HealthModule } from './health/health.module.js';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { RecurringTransactionsModule } from './recurring-transactions/recurring-
     BudgetsModule,
     SavingsGoalsModule,
     RecurringTransactionsModule,
+    HealthModule,
   ],
 })
 export class AppModule {}
