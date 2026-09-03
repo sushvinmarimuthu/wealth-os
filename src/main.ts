@@ -25,6 +25,15 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
 
-  await app.listen(process.env.PORT ?? 3000);
+  console.log('WEALTH-OS: PORT =', process.env.PORT);
+
+  try {
+    await app.listen(process.env.PORT ?? 3000);
+    console.log('WEALTH-OS: listening');
+  } catch (error) {
+    console.error('WEALTH-OS: app.listen FAILED');
+    console.error(error);
+    throw error;
+  }
 }
 await bootstrap();
