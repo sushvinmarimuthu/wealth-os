@@ -12,47 +12,47 @@ import { TransactionsService } from './transactions.service.js';
 import { CreateTransactionDto } from './dto/create-transaction.dto.js';
 import { UpdateTransactionDto } from './dto/update-transaction.dto.js';
 
-@Controller('transactions')
+@Controller('transactions/:secretKey')
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
   @Post()
   create(
-    @Param('secretKey', ParseIntPipe) secretKey: string,
+    @Param('secretKey') secretKey: string,
     @Body() createTransactionDto: CreateTransactionDto,
   ) {
     return this.transactionsService.create(secretKey, createTransactionDto);
   }
 
   @Get()
-  findAll(@Param('userId', ParseIntPipe) userId: number) {
-    return this.transactionsService.findAll(userId);
+  findAll(@Param('secretKey') secretKey: string) {
+    return this.transactionsService.findAll(secretKey);
   }
 
   @Get('account/:accountId')
   findByAccount(
-    @Param('userId', ParseIntPipe) userId: number,
+    @Param('secretKey') secretKey: string,
     @Param('accountId', ParseIntPipe) accountId: number,
   ) {
-    return this.transactionsService.findByAccount(userId, accountId);
+    return this.transactionsService.findByAccount(secretKey, accountId);
   }
 
   @Get(':transactionId')
   findOne(
-    @Param('userId', ParseIntPipe) userId: number,
+    @Param('secretKey') secretKey: string,
     @Param('transactionId', ParseIntPipe) transactionId: number,
   ) {
-    return this.transactionsService.findOne(userId, transactionId);
+    return this.transactionsService.findOne(secretKey, transactionId);
   }
 
   @Patch(':transactionId')
   update(
-    @Param('userId', ParseIntPipe) userId: number,
+    @Param('secretKey') secretKey: string,
     @Param('transactionId', ParseIntPipe) transactionId: number,
     @Body() updateTransactionDto: UpdateTransactionDto,
   ) {
     return this.transactionsService.update(
-      userId,
+      secretKey,
       transactionId,
       updateTransactionDto,
     );
@@ -60,9 +60,9 @@ export class TransactionsController {
 
   @Delete(':transactionId')
   remove(
-    @Param('userId', ParseIntPipe) userId: number,
+    @Param('secretKey') secretKey: string,
     @Param('transactionId', ParseIntPipe) transactionId: number,
   ) {
-    return this.transactionsService.remove(userId, transactionId);
+    return this.transactionsService.remove(secretKey, transactionId);
   }
 }

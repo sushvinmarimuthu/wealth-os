@@ -79,20 +79,22 @@ export class TransactionsService {
     return this.toResponse(transaction);
   }
 
-  async findAll(userId: number) {
+  async findAll(secretKey: string) {
+    const user = await this.ensureUserExists(secretKey);
     const transactions = await this.prisma.transaction.findMany({
-      where: { userId },
+      where: { userId: user.id },
       orderBy: { date: 'desc' },
     });
 
     return transactions.map((transaction) => this.toResponse(transaction));
   }
 
-  async findByAccount(userId: number, accountId: number) {
+  async findByAccount(secretKey: string, accountId: number) {
+    const user = await this.ensureUserExists(secretKey);
     const account = await this.prisma.account.findFirst({
       where: {
         id: accountId,
-        userId,
+        userId: user.id,
       },
     });
 
@@ -101,18 +103,19 @@ export class TransactionsService {
     }
 
     const transactions = await this.prisma.transaction.findMany({
-      where: { userId, accountId },
+      where: { userId: user.id, accountId: account.id },
       orderBy: { date: 'desc' },
     });
 
     return transactions.map((transaction) => this.toResponse(transaction));
   }
 
-  async findOne(userId: number, transactionId: number) {
+  async findOne(secretKey: string, transactionId: number) {
+    const user = await this.ensureUserExists(secretKey);
     const transaction = await this.prisma.transaction.findFirst({
       where: {
         id: transactionId,
-        userId,
+        userId: user.id,
       },
     });
 
@@ -126,14 +129,15 @@ export class TransactionsService {
   }
 
   async update(
-    userId: number,
+    secretKey: string,
     transactionId: number,
     updateTransactionDto: UpdateTransactionDto,
   ) {
+    const user = await this.ensureUserExists(secretKey);
     const existing = await this.prisma.transaction.findFirst({
       where: {
         id: transactionId,
-        userId,
+        userId: user.id,
       },
     });
 
@@ -150,7 +154,7 @@ export class TransactionsService {
       updateTransactionDto.incomeSource ?? existing.incomeSource;
 
     await this.validateTransactionInput({
-      userId,
+      userId: user.id,
       accountId: existing.accountId,
       type: newType,
       category: newCategory,
@@ -194,11 +198,13 @@ export class TransactionsService {
     return this.toResponse(transaction);
   }
 
-  async remove(userId: number, transactionId: number) {
+  async remove(secretKey: string, transactionId: number) {
+    const user = await this.ensureUserExists(secretKey);
+
     const existing = await this.prisma.transaction.findFirst({
       where: {
         id: transactionId,
-        userId,
+        userId: user.id,
       },
     });
 
